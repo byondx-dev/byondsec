@@ -24,6 +24,7 @@ A high-performance, Awwwards-worthy landing page for a premium penetration testi
 - **Border Beams**: Animated flowing borders for pricing highlights.
 - **Scroll Reveal**: Staggered entrance animations for content.
 - **Logo Loop**: Infinite scrolling SVG marquee.
+- **Articles Experience**: Blog/Articles overview with category cards, carousel strip on the homepage, mega-dropdown in the header, and detail pages with sticky TOC and related posts.
 
 ### 🛠 Architecture
 - **Single Page Application (SPA)** with client-side routing.
@@ -43,18 +44,18 @@ A high-performance, Awwwards-worthy landing page for a premium penetration testi
 
 ```
 .
-├── src/
-│   ├── components/
-│   │   ├── ui/           # Reusable animations (Threads, Glitch, etc.)
-│   │   ├── Header.tsx    # Responsive nav with magnetic buttons
-│   │   ├── Hero.tsx      # Main landing area with Terminal
-│   │   ├── Services.tsx  # Grid with Tilt Cards
-│   │   ├── Blog.tsx      # Intelligence feed view
-│   │   └── ...           # Other sections
-│   ├── types.ts          # TS Interfaces
-│   ├── App.tsx           # Main Routing & Layout Logic
-│   └── index.tsx         # Entry point
-├── index.html            # Root HTML & Tailwind Config
+├── components/            # UI sections
+│   ├── ui/                # Reusable animations (Threads, Glitch, etc.)
+│   ├── Header.tsx         # Navigation with mega dropdown for Articles
+│   ├── Hero.tsx           # Main landing area with Terminal
+│   ├── Services.tsx       # Services grid
+│   ├── Blog.tsx           # Articles overview section
+│   └── ...                # Other sections
+├── pages/                 # Full-page views (Articles, Article detail, Contact, Services)
+├── data/blogPosts.ts      # Articles data source
+├── App.tsx                # Main routing/layout logic
+├── index.tsx              # Entry point
+├── index.html             # Root HTML & Tailwind config (CDN)
 └── ...
 ```
 
@@ -97,7 +98,15 @@ colors: {
 ```
 
 ### Adding Blog Posts
-Edit `components/Blog.tsx` and add objects to the `posts` array. The UI will automatically render the new entries with spotlight effects.
+Posts live in `data/blogPosts.ts`. Add a new `BlogPost` object with:
+
+- `slug`, `title`, `date`, `author`, `category`, `tags`, `excerpt`, `readTime`, `featured`, `thumbnail`
+- `sections`: array of `{ id, title, level: 2|3, paragraphs: string[], bullets?, quote? }`
+
+Homepage strip pulls from this data; the Articles overview supports `?category=<Name>` filtering (e.g. `/blog?category=SaaS`).
+
+### Articles Dropdown
+The header has a mega-dropdown under the Articles chevron; click “Articles” to go to `/blog`, click the chevron to open the menu.
 
 ## 🤝 Credits
 
