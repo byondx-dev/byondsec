@@ -2,14 +2,25 @@ import React, { useState } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { NavItem } from '../types';
 import { MagneticButton, DecryptedText } from './ui/Animations';
-import { Menu, X, Box } from 'lucide-react';
+import { Menu, X, Box, ArrowUpRight, ChevronDown } from 'lucide-react';
+import DarkVeil from './ui/DarkVeil';
+import { blogPosts } from '../data/blogPosts';
+
+const base = import.meta.env.BASE_URL || '/';
+const homePath = base === '/' ? '/' : base;
+const servicesPath = `${homePath}services`;
+const blogPath = `${homePath}blog`;
+const contactPath = `${homePath}contact`;
+
+const categories = Array.from(new Set(blogPosts.map((p) => p.category)));
+const articlesSorted = [...blogPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+const popularArticles = blogPosts.filter((p) => p.featured).slice(0, 4);
 
 const navItems: NavItem[] = [
-  { label: 'Services', href: '#services' },
-  { label: 'Methodology', href: '#methodology' },
-  { label: 'Cases', href: '#cases' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: homePath },
+  { label: 'Services', href: servicesPath },
+  { label: 'Articles', href: blogPath },
+  { label: 'Contact', href: contactPath },
 ];
 
 const Header: React.FC = () => {
@@ -20,11 +31,16 @@ const Header: React.FC = () => {
     restDelta: 0.001
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [articlesOpen, setArticlesOpen] = useState(false);
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/70 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/70 border-b border-white/5 overflow-visible">
+        <div className="absolute inset-0 opacity-70">
+          <DarkVeil hueShift={120} noiseIntensity={0.05} scanlineIntensity={0.08} scanlineFrequency={0.5} warpAmount={0.08} />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-background/60 to-transparent pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between relative z-10">
           {/* Logo */}
           <motion.a 
             href="#"
@@ -41,20 +57,119 @@ const Header: React.FC = () => {
           </motion.a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navItems.map((item, i) => (
-              <motion.a
-                key={item.label}
-                href={item.href}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * i }}
-                className="text-sm font-medium text-gray-400 hover:text-white relative group transition-colors"
+          <nav className="hidden md:flex items-center gap-8 relative">
+            {navItems.map((item, i) => {
+              const isBlog = item.label === 'Articles';
+              if (!isBlog) {
+                return (
+                  <motion.a
+                    key={item.label}
+                    href={item.href}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * i }}
+                    className="text-sm font-medium text-gray-400 hover:text-white relative group transition-colors"
+                  >
+                    <DecryptedText text={item.label} speed={100} animateOnHover={true} />
+                    <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary group-hover:w-full transition-all duration-300" />
+                  </motion.a>
+                );
+              }
+              return (
+                <div
+                  key={item.label}
+                  className="relative flex items-center gap-1"
+                  onMouseLeave={() => setArticlesOpen(false)}
+                >
+                  <motion.a
+                    href={item.href}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * i }}
+                    className="text-sm font-medium text-gray-400 hover:text-white relative group transition-colors"
+                  >
+                    <DecryptedText text={item.label} speed={100} animateOnHover={true} />
+                    <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary group-hover:w-full transition-all duration-300" />
+                  </motion.a>
+                  <button
+                    aria-label="Toggle articles menu"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setArticlesOpen((prev) => !prev);
+                    }}
+                    className="flex items-center justify-center p-1 rounded hover:text-primary transition-colors"
+                  >
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${articlesOpen ? 'rotate-180 text-primary' : 'text-gray-500'}`}
+                    />
+                  </button>
+                </div>
+              );
+            })}
+
+            {articlesOpen && (
+              <div
+                className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 w-[min(1100px,calc(100vw-2rem))]"
+                onMouseEnter={() => setArticlesOpen(true)}
+                onMouseLeave={() => setArticlesOpen(false)}
               >
-                <DecryptedText text={item.label} speed={100} animateOnHover={true} />
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary group-hover:w-full transition-all duration-300" />
-              </motion.a>
-            ))}
+                <div className="rounded-xl border border-white/10 bg-background/95 backdrop-blur-lg shadow-[0_20px_60px_rgba(0,0,0,0.35)] overflow-hidden grid grid-cols-[220px_minmax(0,1fr)_260px]">
+                  <div className="bg-black/30 border-r border-white/10 p-6 space-y-2">
+                    <div className="text-xs uppercase tracking-[0.2em] text-primary mb-2">Kategorien</div>
+                    {categories.map((cat) => (
+                      <a
+                        key={cat}
+                        href={`${blogPath}?category=${encodeURIComponent(cat)}`}
+                        className="block text-sm text-gray-200 hover:text-primary transition-colors"
+                      >
+                        {cat}
+                      </a>
+                    ))}
+                    <a
+                      href={blogPath}
+                      className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-white transition-colors"
+                    >
+                      All Articles <ArrowUpRight className="w-4 h-4" />
+                    </a>
+                  </div>
+
+                  <div className="p-6 grid md:grid-cols-3 gap-3">
+                    {articlesSorted.map((post) => (
+                      <a
+                        key={post.slug}
+                        href={`${blogPath}/${post.slug}`}
+                        className="flex flex-col gap-1 text-left rounded-lg border border-white/5 bg-white/5 p-3 hover:border-primary/50 hover:text-primary transition-colors"
+                      >
+                        <span className="text-[11px] uppercase tracking-[0.2em] text-primary">{post.category}</span>
+                        <span className="text-sm font-semibold text-white leading-snug">{post.title}</span>
+                        <span className="text-xs text-gray-400 line-clamp-2">{post.excerpt}</span>
+                      </a>
+                    ))}
+                  </div>
+
+                  <div className="p-6 bg-black/40 border-l border-white/10 flex flex-col gap-3">
+                    <div className="text-xs uppercase text-primary tracking-[0.2em] mb-1">Populär</div>
+                    <div className="space-y-3">
+                      {popularArticles.map((post) => (
+                        <a
+                          key={post.slug}
+                          href={`${blogPath}/${post.slug}`}
+                          className="flex gap-3 items-start rounded-lg border border-white/10 p-2 hover:border-primary/50 transition-colors"
+                        >
+                          <div className="w-16 h-16 rounded-md overflow-hidden border border-white/10 flex-shrink-0">
+                            <img src={post.thumbnail?.src || ''} alt={post.thumbnail?.alt || post.title} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-[11px] uppercase tracking-[0.2em] text-primary mb-1">{post.category}</div>
+                            <div className="text-sm font-semibold text-white leading-snug">{post.title}</div>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </nav>
 
           {/* CTA */}
@@ -87,7 +202,7 @@ const Header: React.FC = () => {
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed inset-0 top-20 z-40 bg-background/95 backdrop-blur-lg flex flex-col p-8 gap-6 md:hidden"
+          className="fixed inset-0 top-16 md:top-20 z-40 bg-background/95 backdrop-blur-lg flex flex-col p-8 gap-6 md:hidden"
         >
           {navItems.map((item) => (
             <a 

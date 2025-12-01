@@ -6,7 +6,7 @@ import { ArrowDown, Command } from 'lucide-react';
 const Hero: React.FC = () => {
   return (
     <Threads amplitude={1.5} distance={10}>
-      <section className="relative w-full min-h-[180vh] md:min-h-screen flex items-start md:items-center justify-center pt-40 pb-40 md:py-24 z-10 px-4">
+      <section className="relative w-full min-h-[130vh] md:min-h-screen flex items-start md:items-center justify-center pt-32 pb-16 md:py-24 z-10 px-4">
         
         <div className="container mx-auto grid lg:grid-cols-12 gap-12 items-center">
           
@@ -40,7 +40,7 @@ const Hero: React.FC = () => {
               transition={{ delay: 0.4 }}
               className="text-gray-400 text-lg md:text-xl max-w-lg mb-12 leading-relaxed font-light"
             >
-              <span className="text-primary font-mono">></span> We simulate sophisticated cyber adversaries to expose your blind spots before they become headlines.
+              <span className="text-primary font-mono">{'>'}</span> We simulate sophisticated cyber adversaries to expose your blind spots before they become headlines.
             </motion.p>
 
             <motion.div 

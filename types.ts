@@ -31,3 +31,26 @@ export interface FaqItem {
   question: string;
   answer: string;
 }
+
+export interface ArticleSection {
+  id: string;
+  title: string;
+  level: 2 | 3;
+  paragraphs: string[];
+  bullets?: string[];
+  quote?: string;
+}
+
+export interface BlogPost {
+  slug: string;
+  title: string;
+  date: string; // ISO string
+  author: string;
+  category: string;
+  tags: string[];
+  excerpt: string;
+  readTime: string;
+  featured?: boolean;
+  thumbnail?: { src: string; alt?: string };
+  sections: ArticleSection[];
+}

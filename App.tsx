@@ -8,6 +8,12 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import { CustomCursor, Reveal, GlitchText, SpotlightCard, BorderBeam, DecryptedText } from './components/ui/Animations';
 import { CheckCircle2 } from 'lucide-react';
+import Blog from './components/Blog';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
+import ScrollToTop from './components/ui/ScrollToTop';
+import ContactPage from './pages/ContactPage';
+import ArticlesStrip from './components/ArticlesStrip';
 
 // Logo Loop with SVGs
 const LogoLoop = () => {
@@ -90,7 +96,77 @@ const Pricing = () => {
     )
 }
 
+const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+
+const resolveView = () => {
+  if (typeof window === 'undefined') return 'home';
+  const path = window.location.pathname.replace(basePath, '') || '/';
+  if (path.startsWith('/contact')) return 'contact';
+  if (path.startsWith('/services')) return 'services';
+  if (path.startsWith('/blog/') && path.split('/blog/')[1]) return 'blog-detail';
+  if (path === '/blog' || path === '/blog/') return 'blog';
+  return 'home';
+};
+
 function App() {
+  const view = resolveView();
+
+  if (view === 'blog') {
+    return (
+      <div className="min-h-screen text-gray-200 selection:bg-primary selection:text-black">
+        <CustomCursor />
+        <Header />
+        <main className="pt-16 md:pt-20">
+          <BlogPage />
+        </main>
+        <Footer />
+        <ScrollToTop />
+      </div>
+    );
+  }
+
+  if (view === 'blog-detail') {
+    return (
+      <div className="min-h-screen text-gray-200 selection:bg-primary selection:text-black">
+        <CustomCursor />
+        <Header />
+        <main className="pt-16 md:pt-20">
+          <BlogPostPage />
+        </main>
+        <Footer />
+        <ScrollToTop />
+      </div>
+    );
+  }
+
+  if (view === 'contact') {
+    return (
+      <div className="min-h-screen text-gray-200 selection:bg-primary selection:text-black">
+        <CustomCursor />
+        <Header />
+        <main className="pt-16 md:pt-20">
+          <ContactPage />
+        </main>
+        <Footer />
+        <ScrollToTop />
+      </div>
+    );
+  }
+
+  if (view === 'services') {
+    return (
+      <div className="min-h-screen text-gray-200 selection:bg-primary selection:text-black">
+        <CustomCursor />
+        <Header />
+        <main className="pt-16 md:pt-20">
+          <ServicesPage />
+        </main>
+        <Footer />
+        <ScrollToTop />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen text-gray-200 selection:bg-primary selection:text-black">
       <CustomCursor />
@@ -137,12 +213,15 @@ function App() {
             </div>
         </section>
 
+        <ArticlesStrip />
+
         <Pricing />
         
         <Contact />
       </main>
 
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }
