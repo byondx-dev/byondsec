@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GlitchText, Reveal, TiltCard, MagneticButton } from '../components/ui/Animations';
 import Contact from '../components/Contact';
+import EngagementModels from '../components/EngagementModels';
+import AvailabilityChecker from '../components/AvailabilityChecker';
 import MatrixRain from '../components/ui/MatrixRain';
 import { Globe, Server, Smartphone, Cloud, Key, Users, Wifi, Database, Code, Cpu, Search, Layers, Terminal, CheckCircle2 } from 'lucide-react';
 import { ServiceItem } from '../types';
@@ -83,6 +85,7 @@ const allServices: ServiceItem[] = [
 
 const ServicesPage: React.FC = () => {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedModels, setSelectedModels] = useState<string[]>([]);
 
   const toggleService = (title: string) => {
     setSelectedServices(prev =>
@@ -92,8 +95,19 @@ const ServicesPage: React.FC = () => {
     );
   };
 
-  const initialMessage = selectedServices.length > 0
-    ? `I am interested in information about the following services:\n\n${selectedServices.map(s => `- ${s}`).join('\n')}\n\nProject details:`
+  const toggleModel = (title: string) => {
+    setSelectedModels(prev =>
+      prev.includes(title)
+        ? prev.filter(t => t !== title)
+        : [...prev, title]
+    );
+  };
+
+  const initialMessage = (selectedServices.length > 0 || selectedModels.length > 0)
+    ? `I am interested in:\n\n` +
+    (selectedServices.length > 0 ? `Services:\n${selectedServices.map(s => `- ${s}`).join('\n')}\n\n` : '') +
+    (selectedModels.length > 0 ? `Engagement Models:\n${selectedModels.map(s => `- ${s}`).join('\n')}\n\n` : '') +
+    `Project details:`
     : '';
 
   return (
@@ -155,7 +169,7 @@ const ServicesPage: React.FC = () => {
                       <div className="relative z-10 flex flex-col h-full">
                         <div className="flex justify-between items-start mb-6">
                           <div className={`p-3 w-fit rounded-lg border transition-all duration-300
-                          ${isSelected ? 'bg-primary/20 border-primary text-primary scale-110' : 'bg-white/5 border-white/5 group-hover:scale-110 group-hover:bg-primary/10 group-hover:border-primary/20'}
+                          ${isSelected ? 'bg-primary/20 border-primary text-primary scale-110' : 'bg-white/5 border-white/5 group-hover:scale-105 md:group-hover:scale-110 group-hover:bg-primary/10 group-hover:border-primary/20'}
                         `}>
                             {React.cloneElement(service.icon as React.ReactElement, { className: `w-8 h-8 ${isSelected ? 'text-primary' : (service.icon as React.ReactElement).props.className}` })}
                           </div>
@@ -188,6 +202,16 @@ const ServicesPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Engagement Models */}
+      <EngagementModels
+        showEducationalContent={true}
+        selectedModels={selectedModels}
+        onToggleModel={toggleModel}
+      />
+
+      {/* Availability Checker */}
+      <AvailabilityChecker />
 
       {/* Contact Form Integration */}
       <Contact initialMessage={initialMessage} />

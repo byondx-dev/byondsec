@@ -16,6 +16,8 @@ import ContactPage from './pages/ContactPage';
 import ServicesPage from './pages/ServicesPage';
 import ArticlesStrip from './components/ArticlesStrip';
 
+import EngagementModels from './components/EngagementModels';
+
 // Logo Loop with SVGs
 const LogoLoop = () => {
   const logos = [
@@ -59,43 +61,6 @@ const LogoLoop = () => {
     </div>
   );
 };
-
-// Simple Pricing Component
-const Pricing = () => {
-  return (
-    <section id="pricing" className="py-32 container mx-auto px-4">
-      <Reveal>
-        <h2 className="text-4xl font-display font-bold mb-12 text-center">Engagement Models</h2>
-      </Reveal>
-      <div className="grid md:grid-cols-3 gap-8">
-        {[
-          { title: "Standard Pentest", price: "from €5k", desc: "Time-boxed assessment for compliance (ISO/SOC2).", features: ["1-2 Weeks", "Standard Report", "1 Retest"] },
-          { title: "Red Teaming", price: "Custom", desc: "Full-scope adversarial simulation.", features: ["4+ Weeks", "Physical & Social", "Attack Path Mapping"], highlight: true },
-          { title: "Continuous", price: "Subscription", desc: "Real-time vulnerability management.", features: ["Monthly Tests", "Slack Integration", "Instant Retest"] }
-        ].map((plan, i) => (
-          <SpotlightCard key={i} className={`h-full border ${plan.highlight ? 'border-primary/50 bg-primary/5' : 'border-white/10 bg-secondary/20'} rounded-xl p-8 flex flex-col relative`}>
-            {/* Border Beam only on highlighted card */}
-            {plan.highlight && <BorderBeam duration={12} colorFrom="#39FF88" colorTo="#29E8FF" />}
-
-            <h3 className="text-xl font-bold font-display mb-2">{plan.title}</h3>
-            <div className="text-3xl font-bold text-white mb-4">{plan.price}</div>
-            <p className="text-gray-400 text-sm mb-6">{plan.desc}</p>
-            <ul className="space-y-3 mb-8 flex-1">
-              {plan.features.map(f => (
-                <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
-                  <CheckCircle2 className="w-4 h-4 text-primary" /> {f}
-                </li>
-              ))}
-            </ul>
-            <button className={`w-full py-3 rounded text-sm font-bold uppercase tracking-wider transition-colors z-10 ${plan.highlight ? 'bg-primary text-black hover:bg-white' : 'border border-white/20 hover:bg-white/10'}`}>
-              Details
-            </button>
-          </SpotlightCard>
-        ))}
-      </div>
-    </section>
-  )
-}
 
 const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
 
@@ -216,7 +181,7 @@ function App() {
 
         <ArticlesStrip />
 
-        <Pricing />
+        <EngagementModels />
 
         <Contact />
       </main>
@@ -226,5 +191,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

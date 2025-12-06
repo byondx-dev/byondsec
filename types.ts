@@ -36,7 +36,7 @@ export interface ArticleSection {
   id: string;
   title: string;
   level: 2 | 3;
-  paragraphs: string[];
+  paragraphs?: string[];
   bullets?: string[];
   quote?: string;
 }

@@ -184,14 +184,12 @@ const BlogPostPage: React.FC = () => {
                         className="w-full text-left flex items-center gap-3 px-2 py-1 rounded hover:bg-white/5 transition-colors"
                       >
                         <span
-                          className={`w-[2px] h-8 rounded-full ${
-                            active ? 'bg-primary shadow-[0_0_10px_rgba(57,255,136,0.5)]' : 'bg-white/20'
-                          }`}
+                          className={`w-[2px] h-8 rounded-full ${active ? 'bg-primary shadow-[0_0_10px_rgba(57,255,136,0.5)]' : 'bg-white/20'
+                            }`}
                         />
                         <span
-                          className={`text-sm leading-snug ${
-                            active ? 'text-white font-semibold' : 'text-gray-300'
-                          }`}
+                          className={`text-sm leading-snug ${active ? 'text-white font-semibold' : 'text-gray-300'
+                            }`}
                         >
                           {item.text}
                         </span>
@@ -243,7 +241,7 @@ const BlogPostPage: React.FC = () => {
                     <Heading id={`${article.slug}-${section.id}`} className="scroll-mt-28 text-2xl font-display font-bold">
                       {section.title}
                     </Heading>
-                    {section.paragraphs.map((p, idx) => (
+                    {section.paragraphs?.map((p, idx) => (
                       <p key={idx} className="text-gray-300 leading-relaxed">
                         {p}
                       </p>
@@ -269,9 +267,9 @@ const BlogPostPage: React.FC = () => {
             <section>
               <h3 className="text-xl font-display font-bold mb-4">Verwandte Artikel</h3>
               <div className="grid sm:grid-cols-2 gap-4">
-                    {relatedArticles.map((item) => (
-                      <button
-                        key={item.slug}
+                {relatedArticles.map((item) => (
+                  <button
+                    key={item.slug}
                     onClick={() => handleSelect(item.slug)}
                     className="text-left border border-white/10 rounded-lg p-4 bg-black/30 hover:border-primary/40 transition-colors"
                   >
@@ -301,9 +299,8 @@ const BlogPostPage: React.FC = () => {
                     <button
                       key={post.slug}
                       onClick={() => handleSelect(post.slug)}
-                      className={`text-left border border-white/10 rounded-lg p-4 bg-black/20 hover:border-primary/40 transition-colors ${
-                        post.slug === article.slug ? 'border-primary/60 bg-primary/10' : ''
-                      }`}
+                      className={`text-left border border-white/10 rounded-lg p-4 bg-black/20 hover:border-primary/40 transition-colors ${post.slug === article.slug ? 'border-primary/60 bg-primary/10' : ''
+                        }`}
                     >
                       <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
                         <span>{formatDate(post.date)}</span>
