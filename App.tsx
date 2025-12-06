@@ -17,6 +17,7 @@ import ServicesPage from './pages/ServicesPage';
 import ArticlesStrip from './components/ArticlesStrip';
 
 import EngagementModels from './components/EngagementModels';
+import CyberDamageTicker from './components/CyberDamageTicker';
 
 // Logo Loop with SVGs
 const LogoLoop = () => {
@@ -143,6 +144,8 @@ function App() {
 
         {/* Logo Loop Section */}
         <LogoLoop />
+
+        <CyberDamageTicker />
 
         <Services />
 

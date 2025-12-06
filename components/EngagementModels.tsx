@@ -16,33 +16,40 @@ const EngagementModels: React.FC<EngagementModelsProps> = ({
 }) => {
     const [openDropdown, setOpenDropdown] = useState<number | null>(null);
 
-    const models = [
-        {
-            title: "Standard Pentest",
-            price: "from €5k",
-            desc: "Time-boxed assessment for performance compliance (ISO/SOC2).",
-            features: ["1-2 Weeks", "Standard Report", "1 Retest"],
-            educationalTitle: "Why choose Standard?",
-            educationalContent: "Perfect for meeting vendor requirements or annual compliance checks. It provides a solid baseline validiation of your security posture within a fixed timeframe."
-        },
-        {
-            title: "Red Teaming",
-            price: "Custom",
-            desc: "Full-scope adversarial simulation.",
-            features: ["4+ Weeks", "Physical & Social", "Attack Path Mapping"],
-            highlight: true,
-            educationalTitle: "Why choose Red Teaming?",
-            educationalContent: "Goes beyond technical vulnerabilities to test your entire organization's resilience. Ideal for mature security programs wanting to validate incident response capabilities."
-        },
-        {
-            title: "Continuous",
-            price: "Subscription",
-            desc: "Real-time vulnerability management.",
-            features: ["Monthly Tests", "Slack Integration", "Instant Retest"],
-            educationalTitle: "Why choose Continuous?",
-            educationalContent: "Built for agile teams deploying daily. Integrates directly into your CI/CD pipeline ensuring that every release is secure, reducing the attacker's window of opportunity."
-        }
-    ];
+    const models: {
+        title: string;
+        price: string;
+        desc: string;
+        features: string[];
+        highlight?: boolean;
+        educationalTitle: string;
+        educationalContent: string;
+    }[] = [
+            {
+                title: "Advanced Pentest 2 in 1",
+                price: "from €9k",
+                desc: "Time-boxed assessment for performance compliance (ISO/SOC2).",
+                features: ["1-2 Weeks", "Standard Report", "1 Retest"],
+                educationalTitle: "Why choose Standard?",
+                educationalContent: "Perfect for meeting vendor requirements or annual compliance checks. It provides a solid baseline validiation of your security posture within a fixed timeframe."
+            },
+            {
+                title: "Red Teaming",
+                price: "Custom",
+                desc: "Full-scope adversarial simulation.",
+                features: ["4+ Weeks", "Physical & Social", "Attack Path Mapping"],
+                educationalTitle: "Why choose Red Teaming?",
+                educationalContent: "Goes beyond technical vulnerabilities to test your entire organization's resilience. Ideal for mature security programs wanting to validate incident response capabilities."
+            },
+            {
+                title: "Continuous secure",
+                price: "WISE PICK: SUBSCRIPTION",
+                desc: "Real-time vulnerability management.",
+                features: ["Monthly Tests", "Chat Integration", "Instant Retest"],
+                educationalTitle: "Why choose continuous secure?",
+                educationalContent: "Built for agile teams deploying daily. Integrates directly into your CI/CD pipeline ensuring that every release is secure, reducing the attacker's window of opportunity. We pentest your environment regulary and provide you with a real-time report of your security posture."
+            }
+        ];
 
     const handleToggle = (title: string) => {
         if (onToggleModel) {

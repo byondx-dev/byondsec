@@ -106,7 +106,7 @@ const BlogPostPage: React.FC = () => {
   const relatedArticles = useMemo(() => {
     if (!article) return [];
     return blogPosts
-      .filter((p) => p.slug !== article.slug && p.tags.some((tag) => article.tags.includes(tag)))
+      .filter((p) => p.slug !== article.slug && p.category === article.category)
       .slice(0, 4);
   }, [article]);
 
@@ -165,13 +165,13 @@ const BlogPostPage: React.FC = () => {
       <section className="pt-8 md:pt-12 pb-16">
         <div className="container mx-auto px-4 grid gap-10 lg:grid-cols-12">
           {/* Left: TOC */}
-          <aside className="lg:col-span-3 order-3 lg:order-1">
+          <aside className="lg:col-span-3">
             <div className="sticky top-24 space-y-6 bg-black/30 border border-white/10 rounded-xl p-5">
               <div className="border-l border-white/10 pl-4 space-y-2">
                 <div className="flex items-center justify-between mb-1">
-                  <h4 className="text-sm font-display font-bold text-primary">Inhaltsverzeichnis</h4>
-                  <button className="text-xs text-primary hover:text-white" onClick={() => scrollToTop()}>
-                    Nach oben
+                  <h4 className="text-sm font-display font-bold text-primary">Table of Contents</h4>
+                  <button className="text-xs text-primary hover:text-white hidden md:block" onClick={() => scrollToTop()}>
+                    Back to top
                   </button>
                 </div>
                 <div className="space-y-1">
@@ -202,7 +202,7 @@ const BlogPostPage: React.FC = () => {
           </aside>
 
           {/* Middle: article + TOC */}
-          <article ref={articleRef} className="lg:col-span-9 order-1 lg:order-3 space-y-6">
+          <article ref={articleRef} className="lg:col-span-9 space-y-6">
 
             <header className="space-y-3">
               <button
@@ -210,7 +210,7 @@ const BlogPostPage: React.FC = () => {
                 onClick={() => (window.location.href = `${blogBasePath}`)}
               >
                 <ArrowLeft className="w-4 h-4" />
-                Zur Blog-Übersicht
+                Back to Articles
               </button>
               <div className="flex items-center gap-3 text-xs text-gray-400">
                 <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-mono uppercase tracking-wider">
@@ -263,90 +263,86 @@ const BlogPostPage: React.FC = () => {
               })}
             </div>
 
-            {/* Related articles */}
-            <section>
-              <h3 className="text-xl font-display font-bold mb-4">Verwandte Artikel</h3>
-              <div className="grid sm:grid-cols-2 gap-4">
+            {/* Related articles based on category */}
+            <section className="pt-10 border-t border-white/10">
+              <h3 className="text-2xl font-display font-bold mb-6 text-primary/90">Related Articles in {article.category}</h3>
+              <div className="grid md:grid-cols-2 gap-6">
                 {relatedArticles.map((item) => (
                   <button
                     key={item.slug}
                     onClick={() => handleSelect(item.slug)}
-                    className="text-left border border-white/10 rounded-lg p-4 bg-black/30 hover:border-primary/40 transition-colors"
+                    className="group relative text-left border border-white/10 rounded-xl p-6 bg-secondary/5 hover:bg-secondary/10 hover:border-primary/40 transition-all overflow-hidden"
                   >
-                    <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                      <span className="px-2 py-1 rounded bg-white/5 text-white/80">{item.category}</span>
+                    <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-2 group-hover:translate-x-0">
+                      <ArrowUpRight className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                      <span className="px-2 py-1 rounded-md bg-white/5 text-primary tracking-wider uppercase text-[10px]">{item.category}</span>
                       <span>{formatDate(item.date)}</span>
                     </div>
-                    <div className="text-white font-semibold mb-1">{item.title}</div>
-                    <p className="text-gray-400 text-sm">{item.excerpt}</p>
+                    <div className="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">{item.title}</div>
+                    <p className="text-gray-400 text-sm line-clamp-2">{item.excerpt}</p>
                   </button>
                 ))}
-              </div>
-            </section>
-
-            <section className="pt-10 border-t border-white/10">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-display font-bold">Alle Artikel</h3>
-                <button className="text-xs text-primary hover:text-white" onClick={() => scrollToTop()}>
-                  Nach oben
-                </button>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {[...blogPosts]
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                  .slice(0, 8)
-                  .map((post) => (
-                    <button
-                      key={post.slug}
-                      onClick={() => handleSelect(post.slug)}
-                      className={`text-left border border-white/10 rounded-lg p-4 bg-black/20 hover:border-primary/40 transition-colors ${post.slug === article.slug ? 'border-primary/60 bg-primary/10' : ''
-                        }`}
-                    >
-                      <div className="flex items-center justify-between text-xs text-gray-400 mb-2">
-                        <span>{formatDate(post.date)}</span>
-                        <span className="px-2 py-1 rounded bg-white/5 text-white/80 text-[10px]">{post.category}</span>
-                      </div>
-                      <div className="text-sm font-semibold leading-snug mb-1">{post.title}</div>
-                      <p className="text-gray-400 text-sm line-clamp-2">{post.excerpt}</p>
-                    </button>
-                  ))}
-              </div>
-              <div className="mt-6 flex justify-center">
-                <button
-                  onClick={() => (window.location.href = blogBasePath)}
-                  className="px-5 py-3 rounded-lg border border-white/20 bg-white/5 text-sm font-semibold hover:border-primary/50 hover:text-primary transition-colors"
-                >
-                  Alle Posts
-                </button>
               </div>
             </section>
           </article>
-
-          {/* Right: popular only with thumbnails */}
-          <aside className="lg:col-span-3 order-2 lg:order-4 space-y-6">
-            <div className="bg-black/30 border border-white/10 rounded-xl p-5">
-              <h3 className="text-lg font-display font-bold mb-3">Populäre Artikel</h3>
-              <div className="space-y-3">
-                {popularArticles.map((post) => (
-                  <button
-                    key={post.slug}
-                    onClick={() => handleSelect(post.slug)}
-                    className="w-full text-left flex gap-3 border border-white/10 rounded-lg p-3 hover:border-primary/50 transition-colors bg-black/20"
-                  >
-                    <div className="w-20 h-16 rounded-md overflow-hidden border border-white/10 flex-shrink-0">
-                      <Thumbnail post={post} />
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs text-gray-400">{formatDate(post.date)}</div>
-                      <div className="text-sm font-semibold leading-snug text-white">{post.title}</div>
-                      <div className="text-[11px] text-gray-400">{post.category}</div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </aside>
         </div>
+      </section>
+
+      {/* "All Articles" Marquee Section */}
+      <section className="py-20 bg-black border-t border-white/10 overflow-hidden relative">
+        <div className="container mx-auto px-4 mb-8 flex justify-between items-end">
+          <div>
+            <p className="text-xs font-mono text-primary uppercase mb-2">Discovery</p>
+            <button onClick={() => window.location.href = blogBasePath} className="text-3xl font-display font-bold hover:text-primary transition-colors text-left">
+              All Articles <span className="text-gray-600"> down here</span>
+            </button>
+          </div>
+          <a href={blogBasePath} className="text-sm font-semibold border-b border-primary text-primary hover:text-white transition-colors pb-1">View All Posts</a>
+        </div>
+
+        {/* Marquee Track */}
+        <div className="relative flex overflow-x-hidden group">
+          <div className="animate-marquee whitespace-nowrap flex gap-6 items-stretch py-4">
+            {/* Double the list for seamless loop */}
+            {[...blogPosts, ...blogPosts].map((post, i) => (
+              <div key={`${post.slug}-${i}`} className="inline-block w-[350px] flex-shrink-0">
+                <button
+                  onClick={() => window.location.href = `${blogBasePath}/${post.slug}`}
+                  className="w-full h-full text-left bg-[#080808] border border-white/10 rounded-lg p-5 hover:border-primary/50 transition-all hover:scale-[1.02] flex flex-col justify-between whitespace-normal"
+                >
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="text-[10px] font-mono border border-white/10 px-2 py-1 rounded text-gray-400">{post.category}</span>
+                      <time className="text-[10px] text-gray-500">{formatDate(post.date)}</time>
+                    </div>
+                    <h4 className="text-md font-bold text-gray-200 leading-snug mb-2 group-hover:text-primary line-clamp-2">{post.title}</h4>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-4 flex items-center gap-1">
+                    Read Article <ArrowUpRight className="w-3 h-3" />
+                  </div>
+                </button>
+              </div>
+            ))}
+          </div>
+          {/* Gradients to fade edges */}
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
+        </div>
+
+        <style>{`
+            .animate-marquee {
+                animation: marquee 50s linear infinite;
+            }
+            .group:hover .animate-marquee {
+                animation-play-state: paused;
+            }
+            @keyframes marquee {
+                0% { transform: translateX(0%); }
+                100% { transform: translateX(-50%); }
+            }
+        `}</style>
       </section>
     </main>
   );

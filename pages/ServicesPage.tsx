@@ -151,6 +151,11 @@ const ServicesPage: React.FC = () => {
       {/* Services Grid */}
       <section id="service-grid" className="py-24 bg-background relative">
         <div className="container mx-auto px-4">
+          <Reveal>
+            <p className="text-center text-lg md:text-xl text-primary font-mono mb-12 max-w-3xl mx-auto border border-primary/20 bg-primary/5 py-4 rounded-lg">
+              Choose the service you are interested in and contact us in the contact form down below.
+            </p>
+          </Reveal>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allServices.map((service, idx) => {
               const isSelected = selectedServices.includes(service.title);
