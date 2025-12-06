@@ -1,119 +1,196 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { GlitchText, Reveal, MagneticButton } from '../components/ui/Animations';
-import DarkVeil from '../components/ui/DarkVeil';
-import { ArrowUpRight, Shield, Activity, Sparkles } from 'lucide-react';
+import { GlitchText, Reveal, TiltCard, MagneticButton } from '../components/ui/Animations';
+import Contact from '../components/Contact';
+import MatrixRain from '../components/ui/MatrixRain';
+import { Globe, Server, Smartphone, Cloud, Key, Users, Wifi, Database, Code, Cpu, Search, Layers, Terminal, CheckCircle2 } from 'lucide-react';
+import { ServiceItem } from '../types';
 
-const effects = [
-  { title: 'Shimmer CTA', desc: 'Button with shimmer sweep on hover.', variant: 'shimmer' },
-  { title: 'Lift Card', desc: 'Elevates with shadow + scale.', variant: 'lift' },
-  { title: 'Gradient Border', desc: 'Animated border beam loop.', variant: 'border' },
-  { title: 'Parallax Icon', desc: 'Icon drifts subtly on hover.', variant: 'parallax' },
-  { title: 'Tilt', desc: '3D tilt following cursor.', variant: 'tilt' },
-  { title: 'Glow Pulse', desc: 'Soft glow pulsing.', variant: 'glow' },
-  { title: 'Slide In', desc: 'Content slides from left.', variant: 'slide' },
-  { title: 'Fade Up', desc: 'Fade + translate up.', variant: 'fade' },
-  { title: 'Tag Bounce', desc: 'Badge with slight bounce.', variant: 'bounce' },
-  { title: 'Underline Grow', desc: 'Underline expands on hover.', variant: 'underline' },
-  { title: 'Icon Spin', desc: 'Icon spins gently.', variant: 'spin' },
-  { title: 'Scale Tap', desc: 'Tap feedback scaling.', variant: 'tap' },
-  { title: 'Shadow Shift', desc: 'Shadow moves on hover.', variant: 'shadow' },
-  { title: 'Blur Reveal', desc: 'Blur out -> clear on hover.', variant: 'blur' },
-  { title: 'Ripple', desc: 'Radial ripple click effect.', variant: 'ripple' },
-  { title: 'Skeleton', desc: 'Skeleton loading bar.', variant: 'skeleton' },
-  { title: 'Floating Chips', desc: 'Chips drift up/down.', variant: 'float' },
-  { title: 'Stagger List', desc: 'Items enter with stagger.', variant: 'stagger' },
-  { title: 'Neon Outline', desc: 'Neon outline glow.', variant: 'neon' },
-  { title: 'Badge Flash', desc: 'Quick flash indicator.', variant: 'flash' },
+const allServices: ServiceItem[] = [
+  {
+    title: "Web Application Pentest",
+    description: "Comprehensive assessment of web applications focusing on OWASP Top 10, business logic flaws, and complex vulnerability chains that automated scanners miss.",
+    tags: ["OWASP", "Business Logic", "API"],
+    icon: <Globe className="w-8 h-8 text-primary" />
+  },
+  {
+    title: "API & Microservices",
+    description: "Deep dive into REST, GraphQL, and gRPC endpoints. We test for broken object level authorization, injection attacks, and improperly handled data exposure.",
+    tags: ["GraphQL", "REST", "AuthZ"],
+    icon: <Server className="w-8 h-8 text-accent" />
+  },
+  {
+    title: "Mobile App Security",
+    description: "Static and dynamic analysis (SAST/DAST) of iOS and Android binaries. We verify secure storage, certificate pinning, and runtime protections.",
+    tags: ["iOS", "Android", "Reversing"],
+    icon: <Smartphone className="w-8 h-8 text-purple-400" />
+  },
+  {
+    title: "Cloud Security Assessment",
+    description: "Reviewing AWS, Azure, and GCP environments. We audit IAM roles, S3 bucket policies, and Kubernetes configurations to prevent privilege escalation.",
+    tags: ["AWS", "Azure", "Kubernetes"],
+    icon: <Cloud className="w-8 h-8 text-blue-400" />
+  },
+  {
+    title: "Internal Infrastructure",
+    description: "Simulating an insider threat. We map attack paths from a compromised workstation to Domain Admin using Active Directory exploitation techniques.",
+    tags: ["AD", "Kerberos", "Lateral Movement"],
+    icon: <Key className="w-8 h-8 text-yellow-400" />
+  },
+  {
+    title: "Red Teaming",
+    description: "Full-scope adversarial simulation. We combine physical security, social engineering, and network exploitation to test your blue team's detection capabilities.",
+    tags: ["Phishing", "Physical", "Stealth"],
+    icon: <Users className="w-8 h-8 text-red-500" />
+  },
+  {
+    title: "Wireless Security",
+    description: "Assessment of Wi-Fi networks (WPA2/WPA3, Enterprise). We test for weak configurations, rogue access points, and segmentation issues.",
+    tags: ["WiFi", "WPA3", "Segmentation"],
+    icon: <Wifi className="w-8 h-8 text-green-400" />
+  },
+  {
+    title: "Database Security",
+    description: "Hardening audits for SQL and NoSQL databases. We check for injection vulnerabilities, weak encryption, and improper access controls.",
+    tags: ["SQL", "NoSQL", "Encryption"],
+    icon: <Database className="w-8 h-8 text-orange-400" />
+  },
+  {
+    title: "Source Code Review",
+    description: "Manual line-by-line code analysis to identify security flaws early in the development lifecycle. We support Java, Python, Go, C++, and more.",
+    tags: ["SAST", "Secure Coding", "DevSecOps"],
+    icon: <Code className="w-8 h-8 text-pink-400" />
+  },
+  {
+    title: "IoT & Firmware",
+    description: "Reverse engineering of firmware and hardware analysis. We look for hardcoded credentials, debug ports (JTAG/UART), and insecure communication.",
+    tags: ["IoT", "Hardware", "Firmware"],
+    icon: <Cpu className="w-8 h-8 text-cyan-400" />
+  },
+  {
+    title: "Social Engineering",
+    description: "Testing the human element. Targeted phishing campaigns, vishing, and physical tailgating to assess security awareness.",
+    tags: ["Phishing", "OSINT", "Awareness"],
+    icon: <Search className="w-8 h-8 text-teal-400" />
+  },
+  {
+    title: "Blockchain & Smart Contracts",
+    description: "Auditing Solidity and Rust smart contracts for reentrancy attacks, overflow bugs, and logical errors in DeFi protocols.",
+    tags: ["Web3", "Solidity", "DeFi"],
+    icon: <Layers className="w-8 h-8 text-indigo-400" />
+  }
 ];
 
 const ServicesPage: React.FC = () => {
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+
+  const toggleService = (title: string) => {
+    setSelectedServices(prev =>
+      prev.includes(title)
+        ? prev.filter(t => t !== title)
+        : [...prev, title]
+    );
+  };
+
+  const initialMessage = selectedServices.length > 0
+    ? `I am interested in information about the following services:\n\n${selectedServices.map(s => `- ${s}`).join('\n')}\n\nProject details:`
+    : '';
+
   return (
     <div className="min-h-screen text-gray-200">
-      <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-20 border-b border-white/5 bg-secondary/40">
-        <div className="absolute inset-0">
-          <DarkVeil hueShift={120} noiseIntensity={0.06} scanlineIntensity={0.1} scanlineFrequency={0.4} warpAmount={0.12} resolutionScale={1.1} />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-background/70 to-background/90" />
-        </div>
-        <div className="container mx-auto px-4 relative z-10">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-32 pb-20 md:pt-48 md:pb-32 border-b border-white/5 bg-black">
+        <MatrixRain color="#39FF88" fontSize={16} speed={35} />
+
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background/90" />
+
+        <div className="container mx-auto px-4 relative z-10 text-center">
           <Reveal>
-            <div className="max-w-4xl space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-xs font-mono uppercase tracking-[0.2em] text-primary">
-                Services & Motion Library
-              </div>
-              <h1 className="text-4xl md:text-6xl font-display font-bold leading-tight">
-                <GlitchText text="Offensive Security, with Motion" />
-              </h1>
-              <p className="text-gray-300 text-lg md:text-xl leading-relaxed max-w-3xl">
-                20+ interaction patterns inspired by ReactBits, woven into our services narrative—so every section feels alive.
-              </p>
-              <MagneticButton>
-                <a href="#library" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-black font-semibold text-sm hover:shadow-[0_0_30px_rgba(57,255,136,0.35)] transition-shadow">
-                  Explore interactions <ArrowUpRight className="w-4 h-4" />
-                </a>
-              </MagneticButton>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-sm font-mono uppercase tracking-[0.2em] text-primary mb-6 backdrop-blur-md">
+              <Terminal className="w-4 h-4" />
+              <span>Cyber Operations</span>
             </div>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-8">
+              <GlitchText text="Elite Offensive Security" />
+            </h1>
+          </Reveal>
+
+          <Reveal delay={0.2}>
+            <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto mb-10">
+              We provide a complete spectrum of offensive security services. From deep-dive manual penetration testing to full-scale red team simulations, we find the vulnerabilities that matter.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.3}>
+            <MagneticButton>
+              <a href="#service-grid" className="inline-flex items-center gap-2 px-8 py-4 rounded bg-primary text-black font-bold text-sm uppercase tracking-widest hover:bg-white transition-colors">
+                Explore Capabilities
+              </a>
+            </MagneticButton>
           </Reveal>
         </div>
       </section>
 
-      <section className="py-16">
-        <div className="container mx-auto px-4 grid md:grid-cols-3 gap-6">
-          {[{ icon: Shield, title: 'Pentests & Red Team', desc: 'Full-spectrum adversarial simulation with rich reporting.' },
-            { icon: Activity, title: 'Continuous Validation', desc: 'Attack surface monitoring, retesting, and alerting.' },
-            { icon: Sparkles, title: 'Detection Engineering', desc: 'Purple teaming, detections, and runbooks tuned with you.' },
-          ].map((card) => (
-            <motion.div
-              key={card.title}
-              whileHover={{ y: -6, boxShadow: '0 12px 35px rgba(0,0,0,0.35)' }}
-              className="p-6 rounded-xl border border-white/10 bg-black/40 space-y-3"
-            >
-              <card.icon className="w-6 h-6 text-primary" />
-              <h3 className="text-xl font-display font-bold">{card.title}</h3>
-              <p className="text-gray-400">{card.desc}</p>
-            </motion.div>
-          ))}
+      {/* Services Grid */}
+      <section id="service-grid" className="py-24 bg-background relative">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {allServices.map((service, idx) => {
+              const isSelected = selectedServices.includes(service.title);
+              return (
+                <Reveal key={idx} delay={idx * 0.05}>
+                  <TiltCard className="h-full">
+                    <div
+                      onClick={() => toggleService(service.title)}
+                      className={`group relative h-full border p-8 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(57,255,136,0.1)] cursor-pointer
+                      ${isSelected ? 'bg-primary/10 border-primary shadow-[0_0_20px_rgba(57,255,136,0.15)]' : 'bg-secondary/20 border-white/5 hover:border-primary/40'}
+                    `}
+                    >
+                      {/* Hover Gradient Overlay */}
+                      <div className={`absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent transition-opacity duration-500 ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
+
+                      <div className="relative z-10 flex flex-col h-full">
+                        <div className="flex justify-between items-start mb-6">
+                          <div className={`p-3 w-fit rounded-lg border transition-all duration-300
+                          ${isSelected ? 'bg-primary/20 border-primary text-primary scale-110' : 'bg-white/5 border-white/5 group-hover:scale-110 group-hover:bg-primary/10 group-hover:border-primary/20'}
+                        `}>
+                            {React.cloneElement(service.icon as React.ReactElement, { className: `w-8 h-8 ${isSelected ? 'text-primary' : (service.icon as React.ReactElement).props.className}` })}
+                          </div>
+                          {isSelected && <CheckCircle2 className="w-6 h-6 text-primary animate-in fade-in zoom-in" />}
+                        </div>
+
+                        <h3 className={`text-xl font-bold font-display mb-3 transition-colors ${isSelected ? 'text-primary' : 'group-hover:text-primary'}`}>
+                          {service.title}
+                        </h3>
+
+                        <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-1">
+                          {service.description}
+                        </p>
+
+                        <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5 group-hover:border-white/10 transition-colors">
+                          {service.tags.map(tag => (
+                            <span key={tag} className={`text-[10px] font-mono uppercase tracking-wider px-2 py-1 rounded border transition-colors
+                            ${isSelected ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-black/40 text-gray-400 border-white/10 group-hover:border-primary/30 group-hover:text-primary/80'}
+                          `}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </TiltCard>
+                </Reveal>
+              )
+            })}
+          </div>
         </div>
       </section>
 
-      <section id="library" className="py-20 bg-secondary/10 border-y border-white/5">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="text-3xl font-display font-bold">20 ReactBits-inspired interactions</h2>
-            <span className="text-sm text-gray-400">Hover / focus to preview</span>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {effects.map((effect, idx) => (
-              <motion.div
-                key={effect.title}
-                className="relative p-4 rounded-lg border border-white/10 bg-black/30 overflow-hidden"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.03 }}
-                whileHover={{ y: -4, scale: 1.01 }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs uppercase tracking-[0.2em] text-primary">{effect.variant}</span>
-                  <motion.span
-                    className="w-2 h-2 rounded-full bg-primary/70"
-                    animate={{ scale: [1, 1.3, 1], opacity: [0.6, 1, 0.6] }}
-                    transition={{ duration: 1.6, repeat: Infinity, delay: idx * 0.05 }}
-                  />
-                </div>
-                <h4 className="text-lg font-display font-bold mb-1">{effect.title}</h4>
-                <p className="text-sm text-gray-400 mb-3">{effect.desc}</p>
-                <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-primary via-accent to-primary"
-                    animate={{ x: ['-100%', '100%'] }}
-                    transition={{ duration: 2 + idx * 0.05, repeat: Infinity, ease: 'linear' }}
-                  />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Contact Form Integration */}
+      <Contact initialMessage={initialMessage} />
     </div>
   );
 };

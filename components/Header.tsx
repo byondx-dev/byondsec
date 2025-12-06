@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { NavItem } from '../types';
 import { MagneticButton, DecryptedText } from './ui/Animations';
@@ -31,7 +31,21 @@ const Header: React.FC = () => {
     restDelta: 0.001
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileArticlesOpen, setMobileArticlesOpen] = useState(false);
   const [articlesOpen, setArticlesOpen] = useState(false);
+  const [logoRotation, setLogoRotation] = useState(0);
+
+  // Close dropdown on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (articlesOpen) {
+        setArticlesOpen(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [articlesOpen]);
 
   return (
     <>
@@ -42,19 +56,24 @@ const Header: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-background/60 to-transparent pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between relative z-10">
           {/* Logo */}
-          <motion.a 
-            href="#"
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2"
           >
-            <div className="relative w-8 h-8 flex items-center justify-center bg-primary/10 border border-primary/30 rounded group-hover:border-primary transition-colors">
-              <Box className="w-5 h-5 text-primary group-hover:animate-spin" />
-            </div>
-            <span className="font-display font-bold text-lg tracking-tight">
-                byond<span className="text-primary">SEC</span>
-            </span>
-          </motion.a>
+            <motion.button
+              onClick={() => setLogoRotation(prev => prev + 360)}
+              animate={{ rotate: logoRotation }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="relative w-8 h-8 flex items-center justify-center bg-primary/10 border border-primary/30 rounded hover:border-primary transition-colors cursor-pointer"
+              aria-label="Spin logo"
+            >
+              <Box className="w-5 h-5 text-primary" />
+            </motion.button>
+            <a href={homePath} className="font-display font-bold text-lg tracking-tight hover:opacity-80 transition-opacity">
+              byond<span className="text-primary">SEC</span>
+            </a>
+          </motion.div>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8 relative">
@@ -79,7 +98,6 @@ const Header: React.FC = () => {
                 <div
                   key={item.label}
                   className="relative flex items-center gap-1"
-                  onMouseLeave={() => setArticlesOpen(false)}
                 >
                   <motion.a
                     href={item.href}
@@ -110,12 +128,10 @@ const Header: React.FC = () => {
             {articlesOpen && (
               <div
                 className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 w-[min(1100px,calc(100vw-2rem))]"
-                onMouseEnter={() => setArticlesOpen(true)}
-                onMouseLeave={() => setArticlesOpen(false)}
               >
                 <div className="rounded-xl border border-white/10 bg-background/95 backdrop-blur-lg shadow-[0_20px_60px_rgba(0,0,0,0.35)] overflow-hidden grid grid-cols-[220px_minmax(0,1fr)_260px]">
                   <div className="bg-black/30 border-r border-white/10 p-6 space-y-2">
-                    <div className="text-xs uppercase tracking-[0.2em] text-primary mb-2">Kategorien</div>
+                    <div className="text-xs uppercase tracking-[0.2em] text-primary mb-2">Categories</div>
                     {categories.map((cat) => (
                       <a
                         key={cat}
@@ -148,7 +164,7 @@ const Header: React.FC = () => {
                   </div>
 
                   <div className="p-6 bg-black/40 border-l border-white/10 flex flex-col gap-3">
-                    <div className="text-xs uppercase text-primary tracking-[0.2em] mb-1">Populär</div>
+                    <div className="text-xs uppercase text-primary tracking-[0.2em] mb-1">Popular</div>
                     <div className="space-y-3">
                       {popularArticles.map((post) => (
                         <a
@@ -182,7 +198,7 @@ const Header: React.FC = () => {
           </div>
 
           {/* Mobile Toggle */}
-          <button 
+          <button
             className="md:hidden text-gray-300"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
@@ -199,27 +215,103 @@ const Header: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed inset-0 top-16 md:top-20 z-40 bg-background/95 backdrop-blur-lg flex flex-col p-8 gap-6 md:hidden"
+          className="fixed inset-0 top-16 md:top-20 z-40 bg-background/95 backdrop-blur-lg flex flex-col p-8 gap-6 md:hidden overflow-y-auto"
         >
-          {navItems.map((item) => (
-            <a 
-              key={item.label}
-              href={item.href}
-              className="text-2xl font-display font-bold text-white border-b border-white/10 pb-4"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {item.label}
-            </a>
-          ))}
-          <a 
+          {navItems.map((item) => {
+            if (item.label === 'Articles') {
+              return (
+                <div key={item.label} className="border-b border-white/10 pb-4">
+                  <button
+                    onClick={() => setMobileArticlesOpen(!mobileArticlesOpen)}
+                    className="flex items-center justify-between w-full text-2xl font-display font-bold text-white group"
+                  >
+                    {item.label}
+                    <ChevronDown
+                      className={`w-6 h-6 transition-transform duration-300 ${mobileArticlesOpen ? 'rotate-180 text-primary' : 'text-gray-400 group-hover:text-white'
+                        }`}
+                    />
+                  </button>
+
+                  {mobileArticlesOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      className="mt-6 flex flex-col gap-6 pl-2"
+                    >
+                      {/* Categories */}
+                      <div className="space-y-3">
+                        <div className="text-xs uppercase tracking-[0.2em] text-primary">Categories</div>
+                        {categories.map((cat) => (
+                          <a
+                            key={cat}
+                            href={`${blogPath}?category=${encodeURIComponent(cat)}`}
+                            className="block text-lg text-gray-300 hover:text-white transition-colors"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {cat}
+                          </a>
+                        ))}
+                        <a
+                          href={blogPath}
+                          className="mt-2 inline-flex items-center gap-2 text-base font-semibold text-primary hover:text-white transition-colors"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          All Articles <ArrowUpRight className="w-4 h-4" />
+                        </a>
+                      </div>
+
+                      {/* Popular */}
+                      <div className="space-y-4">
+                        <div className="text-xs uppercase tracking-[0.2em] text-primary">Popular</div>
+                        <div className="grid gap-3">
+                          {popularArticles.slice(0, 3).map((post) => (
+                            <a
+                              key={post.slug}
+                              href={`${blogPath}/${post.slug}`}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="flex gap-3 items-start rounded-lg border border-white/10 p-2 bg-white/5 active:bg-white/10"
+                            >
+                              <div className="w-16 h-16 rounded-md overflow-hidden border border-white/10 flex-shrink-0">
+                                <img
+                                  src={post.thumbnail?.src || ''}
+                                  alt={post.thumbnail?.alt || post.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-primary mb-1">{post.category}</div>
+                                <div className="text-sm font-semibold text-white leading-snug line-clamp-2">{post.title}</div>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <a
+                key={item.label}
+                href={item.href}
+                className="text-2xl font-display font-bold text-white border-b border-white/10 pb-4"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+          <a
             href="#contact"
             className="mt-4 w-full py-4 bg-primary text-black font-bold text-center uppercase tracking-widest"
             onClick={() => setMobileMenuOpen(false)}
           >
-             Request Pentest
+            Request Pentest
           </a>
         </motion.div>
       )}
