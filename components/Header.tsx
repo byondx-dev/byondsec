@@ -191,7 +191,7 @@ const Header: React.FC = () => {
           {/* CTA */}
           <div className="hidden md:block">
             <MagneticButton>
-              <a href="#contact" className="px-5 py-2.5 bg-primary/10 text-primary border border-primary/50 text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-black transition-all duration-300 clip-path-slant">
+              <a href={contactPath} className="px-5 py-2.5 bg-primary/10 text-primary border border-primary/50 text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-black transition-all duration-300 clip-path-slant">
                 Request Pentest
               </a>
             </MagneticButton>
@@ -307,7 +307,7 @@ const Header: React.FC = () => {
             );
           })}
           <a
-            href="#contact"
+            href={contactPath}
             className="mt-4 w-full py-4 bg-primary text-black font-bold text-center uppercase tracking-widest"
             onClick={() => setMobileMenuOpen(false)}
           >
